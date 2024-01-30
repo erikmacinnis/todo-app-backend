@@ -2,11 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { Aptos, AptosConfig, Network } = require("@aptos-labs/ts-sdk");
+const { getPgAdminClient } = require('./core/bootstrap/database');
+const { setupEnv } = require('./core/bootstrap/env');
 
 const aptosConfig = new AptosConfig({ network: Network.TESTNET });
 const aptos = new Aptos(aptosConfig);
 
 const app = express();
+
+const env = setupEnv();
+
+const db = getPgAdminClient(env)
 
 // app.get('/getEvent', (req, res) => {
 //     res.send('Hello World!');
@@ -35,6 +41,9 @@ async function waitToUpdateLeaderboard() {
         // Update the database with latest todo updates
         console.log('latestTodoUpdates', latestTodoUpdates)
         currentBlockHeight = newBlockHeight
+        if (latestTodoUpdates.size > 0) {
+            updateDatabase(latestTodoUpdates)
+        }
         await sleep(5000) 
     }
 }

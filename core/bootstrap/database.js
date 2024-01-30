@@ -3,10 +3,10 @@ const { Client } = require('pg');
 
 function getPgAdminClient(env) {
     const client =  new Client({
-        user: env.user,
-        host: env.host,
-        database: env.database,
-        password: env.password,
+        user: env.dbUser,
+        host: env.dbHost,
+        database: env.dbName,
+        password: env.dbPassword,
         port: env.dbPort,
     });
 

@@ -1,5 +1,5 @@
 class MonitorLeaderboardProcess {
-    constructor(monitorLeaderboardUsecase, env) {
+    constructor({monitorLeaderboardUsecase, env}) {
         this.monitorLeaderboardUsecase = monitorLeaderboardUsecase;
         this.env = env;
     }

@@ -1,23 +1,25 @@
 require('dotenv').config();
 
 class Env {
-    constructor(
+    constructor({
         dbUser,
         dbHost,
         dbName,
         dbPassword,
         dbPort,
+        dbAdminUuid,
         serverAddr,
         serverPort,
         network,
         aptosNodeEndpoint,
         listenFunctionName,
-    ) {
+    }) {
         this.dbUser = dbUser;
         this.dbHost = dbHost;
         this.dbName = dbName;
         this.dbPassword = dbPassword;
         this.dbPort = dbPort;
+        this.dbAdminUuid = dbAdminUuid;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
         this.network = network;
@@ -31,8 +33,9 @@ function setupEnv() {
         dbUser: process.env.DB_USER,
         dbHost: process.env.DB_HOST,
         dbName: process.env.DB_NAME,
-        dbPassword: process.env.DB_PASSWORD,
+        dbPassword: process.env.DB_PASS,
         dbPort: process.env.DB_PORT,
+        dbAdminUuid: process.env.DB_ADMIN_UUID,
         serverAddr: process.env.SERVER_ADDR,
         serverPort: process.env.SERVER_PORT,
         network: process.env.NETWORK,

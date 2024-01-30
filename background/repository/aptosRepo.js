@@ -1,5 +1,5 @@
 class AptosRepo {
-    constructor(aptosDatasource) {
+    constructor({aptosDatasource}) {
         this.aptosDatasource = aptosDatasource;
     }
 
@@ -13,8 +13,8 @@ class AptosRepo {
 
         let getTxArr = []
         for (let i = 0; i < numBlocks; i++) {
-            let blockNumber = oldBlockHeight + i + 1;
-            getTxArr.push((getTodoTxsByBlock(blockNumber)))
+            let blockHeight = oldBlockHeight + i + 1;
+            getTxArr.push((this.getTodoTxsByBlock(blockHeight)))
         }
     
         console.log('oldBlockHeight', oldBlockHeight)
@@ -51,7 +51,7 @@ class AptosRepo {
         const blockTxs = block.transactions
         let txs = [];
         for (let tx of blockTxs) {
-            if (tx.payload != null && tx.payload.function == aptosDatasource.listenFunctionName) {
+            if (tx.payload != null && tx.payload.function == this.aptosDatasource.listenFunctionName) {
                 txs.push(tx)
             }
         }

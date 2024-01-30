@@ -15,17 +15,15 @@ async function setupBackground(app) {
     console.log(aptosDatasource)
     const leaderboardRepo = new LeaderboardRepo({
         db: app.db,
+        dbAdminUuid: app.env.dbAdminUuid,
     })
-    console.log(leaderboardRepo)
     const aptosRepo = new AptosRepo({
         aptosDatasource: aptosDatasource,
     })
-    console.log(aptosRepo)
     const monitorLeaderboardUsecase = new MonitorLeaderboardUsecase({
         aptosRepo: aptosRepo,
         leaderboardRepo: leaderboardRepo,
     })
-    await monitorLeaderboardUsecase.monitorLeaderboard();
     const monitorLeaderboardProcess = new MonitorLeaderboardProcess({
         monitorLeaderboardUsecase: monitorLeaderboardUsecase,
         env: app.env,

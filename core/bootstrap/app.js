@@ -15,7 +15,7 @@ class App {
 
     async listen() {
         this.server.listen(this.env.serverPort, async () => {
-            console.log(`Server listening at ${process.env.SERVER_ADDR}:${process.env.PORT}`);
+            console.log(`Server listening at ${this.env.serverAddr}:${this.env.serverPort}`);
         });
     }
 }
