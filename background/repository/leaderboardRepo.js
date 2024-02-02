@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const {UserModel} = require('../domain/userModel.js')
 
 class LeaderboardRepo {
     constructor({db, dbAdminUuid}) {
@@ -19,8 +20,7 @@ class LeaderboardRepo {
     async addUser(address, numTodos) {
         try {
             const id = uuidv4();
-            const createdOn = new Date().toISOString();
-            const query = 'INSERT INTO users (id, address, num_complete_todos, created_on, created_by) VALUES ($1, $2, $3, $4, $5)';
+            const query = 'INSERT INTO users (id, address, num_complete_todos, created_on, created_by) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $5)';
             const values = [id, address, numTodos, createdOn, this.dbAdminUuid];
             
             await this.db.query(query, values);
@@ -33,8 +33,8 @@ class LeaderboardRepo {
     async incrementNumCompleteTodos(address, numTodos) {
         try {
             const updatedOn = new Date().toISOString();
-            const query = 'UPDATE users SET num_complete_todos = num_complete_todos + $1 AND updated_on = $2 AND  WHERE address = $3';
-            await this.db.query(query, [numTodos, updatedOn, address]);
+            const query = `UPDATE users SET num_complete_todos = num_complete_todos + ${numTodos}, updated_on = CURRENT_TIMESTAMP WHERE address = '${address}'`;
+            await this.db.query(query);
         } catch (err) {
             console.error(err);
             throw err;
@@ -52,6 +52,16 @@ class LeaderboardRepo {
             } catch(err) {
                 console.error(err)
             }
+        }
+    }
+
+    async getAllUsers() {
+        try {
+            const res = await this.db.query('SELECT address, num_complete_todos FROM users');
+            return res.rows.map(row => new UserModel({ address: row.address, numCompleteTodos: row.num_complete_todos }));
+        } catch (err) {
+            console.error(err);
+            throw err;
         }
     }
 }

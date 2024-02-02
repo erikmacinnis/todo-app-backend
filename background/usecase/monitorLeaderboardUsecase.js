@@ -1,26 +1,33 @@
 const {sleep} = require('../../core/util/util')
 
 class MonitorLeaderboardUsecase {
-    constructor({aptosRepo, leaderboardRepo}) {
+    constructor({aptosRepo, leaderboardRepo, leaderboardMessenger}) {
         this.aptosRepo = aptosRepo;
         this.leaderboardRepo = leaderboardRepo;
+        this.leaderboardMessenger = leaderboardMessenger;
     }
 
     // Listens for updates to the leaderboard then updates the db
     async monitorLeaderboard() {
         let currentBlockHeight = await this.aptosRepo.getBlockHeight()
         while (true) {
-            let newBlockHeight = await this.aptosRepo.getBlockHeight()
-            let latestTodoTxs = await this.aptosRepo.getLatestTodoTxs(currentBlockHeight, newBlockHeight)
-            let latestTodoUpdates = await this.aptosRepo.getLatestTodoUpdates(latestTodoTxs)
-            // Update the database with latest todo updates
-            console.log('latestTodoUpdates', latestTodoUpdates)
-            if (latestTodoUpdates.size > 0) {
-                this.leaderboardRepo.incrementUserTodos(latestTodoUpdates)
+            try {
+                let newBlockHeight = await this.aptosRepo.getBlockHeight()
+                let latestTodoTxs = await this.aptosRepo.getLatestTodoTxs(currentBlockHeight, newBlockHeight)
+                let latestTodoUpdates = await this.aptosRepo.getLatestTodoUpdates(latestTodoTxs)
+                // Update the database with latest todo updates
+                console.log('latestTodoUpdates', latestTodoUpdates)
+                if (latestTodoUpdates.size > 0) {
+                    await this.leaderboardRepo.incrementUserTodos(latestTodoUpdates)
+                    const leaderboardData = await this.leaderboardRepo.getAllUsers()
+                    await this.leaderboardMessenger.sendLeaderboardData(leaderboardData)
+                }
+                currentBlockHeight = newBlockHeight
+                await sleep(5000) 
+            } catch (err) {
+                console.log(err)
+                await sleep(5000) 
             }
-            // this.leaderboardRepo.updateLeaderBoard;
-            currentBlockHeight = newBlockHeight
-            await sleep(5000) 
         }
     }
 }
