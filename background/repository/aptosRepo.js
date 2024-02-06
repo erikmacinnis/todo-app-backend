@@ -16,14 +16,8 @@ class AptosRepo {
             let blockHeight = oldBlockHeight + i + 1;
             getTxArr.push((this.getTodoTxsByBlock(blockHeight)))
         }
-    
-        console.log('oldBlockHeight', oldBlockHeight)
-        console.log('currentBlockHeight', currentBlockHeight)
-    
-    
+
         const txArr = await Promise.all(getTxArr)
-    
-        console.log(txArr)
     
         return txArr.flat()
     }
@@ -57,6 +51,20 @@ class AptosRepo {
         }
     
         return txs;
+    }
+
+    async allUsersCompletedTodos(addresses) {
+        const addrToNumTodos = new Map()
+        for (const addr of addresses) {
+            try {
+                const resource = await this.aptosDatasource.getTodoResource(addr);
+                addrToNumTodos.set(addr, resource.numCompleted)
+            } catch (err) {
+                console.error(err)
+                return null
+            }
+        }
+        return addrToNumTodos
     }
 }
 

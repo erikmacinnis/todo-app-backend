@@ -1,8 +1,18 @@
 const WebSocket = require('ws');
 
 class LeaderboardWebsocket {
-    constructor({wss}) {
+    constructor({wss, leaderboardRepo}) {
         this.wss = wss;
+        this.leaderboardRepo = leaderboardRepo;
+
+        this.wss.on('connection', (ws) => {
+            this.onOpen(ws);
+        });
+    }
+
+    async onOpen(ws) {
+        const leaderboardData = await this.leaderboardRepo.getTopUsers()
+        ws.send(JSON.stringify(leaderboardData));
     }
 
     async sendLeaderboardData(leaderboardData) {

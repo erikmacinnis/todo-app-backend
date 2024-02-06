@@ -5,6 +5,8 @@ const { LeaderboardRepo } = require("./repository/leaderboardRepo");
 const { AptosDatasource } = require("./datasource/aptosDatasource");
 const { LeaderboardWebhook } = require("./webhook/leaderboardWebhook");
 const LeaderboardWebsocket = require("./websocket/leaderboardWebsocket");
+const { SetLeaderboardUsecase } = require("./usecase/setLeaderboardUsecase");
+const { SetLeaderboardProcess } = require("./process/setLeaderboardProcess");
 
 async function setupBackground(app) {
 
@@ -13,6 +15,7 @@ async function setupBackground(app) {
         aptosNodeEndpoint: app.env.aptosNodeEndpoint,
         listenFunctionName: app.env.listenFunctionName,
         network: app.env.network,
+        todoResourceName: app.env.todoResourceName,
     })
     const leaderboardRepo = new LeaderboardRepo({
         db: app.db,
@@ -24,9 +27,10 @@ async function setupBackground(app) {
     // const leaderboardWebhook = new LeaderboardWebhook({
     //     frontendAddr: app.env.frontendAddr,
     // })
-    console.log(app.wss)
+    // Setting up monitor leaderboard
     const leaderboardWebsocket = new LeaderboardWebsocket({
         wss: app.wss,
+        leaderboardRepo: leaderboardRepo,
     })
     const monitorLeaderboardUsecase = new MonitorLeaderboardUsecase({
         aptosRepo: aptosRepo,
@@ -37,9 +41,19 @@ async function setupBackground(app) {
         monitorLeaderboardUsecase: monitorLeaderboardUsecase,
         env: app.env,
     });
+    // Setting up setting leaderboard
+    const setLeaderboardUsecase = new SetLeaderboardUsecase({
+        aptosRepo: aptosRepo,
+        leaderboardRepo: leaderboardRepo,
+    })
+    const setLeaderboardProcess = new SetLeaderboardProcess({
+        setLeaderboardUsecase: setLeaderboardUsecase,
+        env: app.env,
+    })
 
     // Running MonitorLeaderboardProcess
     monitorLeaderboardProcess.run();
+    setLeaderboardProcess.run();
 }
 
 module.exports = {setupBackground}

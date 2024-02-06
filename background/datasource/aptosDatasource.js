@@ -1,8 +1,8 @@
-const { Aptos, AptosConfig, Network } = require("@aptos-labs/ts-sdk");
+const { Aptos, AptosConfig, Network, AccountAddress } = require("@aptos-labs/ts-sdk");
 const axios = require('axios');
 
 class AptosDatasource {
-    constructor({aptosNodeEndpoint, listenFunctionName, network}) {
+    constructor({aptosNodeEndpoint, listenFunctionName, todoResourceName, network}) {
         let aptosConfig;
         const networkStr = network.toString();
         switch (networkStr) {
@@ -21,6 +21,7 @@ class AptosDatasource {
         this.aptos = aptos;
         this.aptosNodeEndpoint = aptosNodeEndpoint;
         this.listenFunctionName = listenFunctionName;
+        this.todoResourceName = todoResourceName
     }
 
     async getBlockHeight() {
@@ -35,6 +36,15 @@ class AptosDatasource {
                 withTransactions: true,
             }
         },)
+    }
+
+    async getTodoResource(address) {
+        const addr = AccountAddress.fromString(address)
+        const todoResource = await this.aptos.getAccountResource({
+            accountAddress: addr,
+            resourceType: this.todoResourceName,
+        })
+        return todoResource
     }
 }
 

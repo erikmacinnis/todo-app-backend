@@ -14,6 +14,7 @@ class Env {
         network,
         aptosNodeEndpoint,
         listenFunctionName,
+        todoResourceName,
         frontendAddr,
     }) {
         this.dbUser = dbUser;
@@ -28,6 +29,7 @@ class Env {
         this.network = network;
         this.aptosNodeEndpoint = aptosNodeEndpoint;
         this.listenFunctionName = listenFunctionName;
+        this.todoResourceName = todoResourceName;
         this.frontendAddr = frontendAddr;
     }
 }
@@ -46,6 +48,7 @@ function setupEnv() {
         network: process.env.NETWORK,
         aptosNodeEndpoint: process.env.APTOS_NODE_ENDPOINT,
         listenFunctionName: process.env.LISTEN_FUNCTION_NAME,
+        todoResourceName: process.env.TODO_RESOURCE_NAME,
         frontendAddr: process.env.FRONTEND_ADDR,
     })
 

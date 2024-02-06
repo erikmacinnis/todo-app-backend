@@ -19,13 +19,13 @@ class MonitorLeaderboardUsecase {
                 console.log('latestTodoUpdates', latestTodoUpdates)
                 if (latestTodoUpdates.size > 0) {
                     await this.leaderboardRepo.incrementUserTodos(latestTodoUpdates)
-                    const leaderboardData = await this.leaderboardRepo.getAllUsers()
+                    const leaderboardData = await this.leaderboardRepo.getTopUsers()
                     await this.leaderboardMessenger.sendLeaderboardData(leaderboardData)
                 }
                 currentBlockHeight = newBlockHeight
                 await sleep(5000) 
             } catch (err) {
-                console.log(err)
+                console.error(err)
                 await sleep(5000) 
             }
         }
