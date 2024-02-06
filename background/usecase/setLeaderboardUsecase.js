@@ -14,8 +14,10 @@ class SetLeaderboardUsecase {
                 const addrs = await this.leaderboardRepo.getAllAddrs()
                 console.log(addrs)
                 const addrToNumCompleteTodos = await this.aptosRepo.allUsersCompletedTodos(addrs)
-                console.log(addrToNumCompleteTodos)
-                await this.leaderboardRepo.setLeaderboard(addrToNumCompleteTodos)
+                if (addrToNumCompleteTodos != null) {
+                    console.log(addrToNumCompleteTodos)
+                    await this.leaderboardRepo.setLeaderboard(addrToNumCompleteTodos)
+                }
                 // does this every 10 minutes
                 // await sleep(600000)
                 await sleep(10000)
